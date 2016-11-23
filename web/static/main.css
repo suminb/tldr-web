@@ -1,0 +1,26 @@
+body {
+  font-size: 12pt;
+}
+body, a, div, span, p, h1, h2, h3, h4, h5, h6 {
+  font-weight: 400;
+}
+
+h1 {
+  font-size: 22pt;
+}
+h2 {
+  font-size: 18pt;
+}
+h3 {
+  font-size: 16pt;
+}
+h4 {
+  font-size: 14pt;
+}
+
+div.content {
+  margin: 0 auto;
+  padding: 64px 2em 0 2em;
+  max-width: 1000px;
+}
+
