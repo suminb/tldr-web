@@ -26,6 +26,15 @@
   <div id="summary" class="ui segment"></div>
 </div>
 <div class="ui bottom attached tab segment" data-tab="second">
+  <i class="announcement icon"></i>
+  We're working on this feature. Stay tuned!
 </div>
 
+{% endblock %}
+{% block javascript %}
+<script>
+  $(function() {
+    $('.menu .item').tab();
+  });
+</script>
 {% endblock %}
