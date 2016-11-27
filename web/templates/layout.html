@@ -1,50 +1,29 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Brogrammer Labs</title>
+    <title>TL;DR</title>
 
-    <!-- Latest compiled and minified CSS -->
-    <link rel="stylesheet"
-      href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
-      integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
-      crossorigin="anonymous">
-
-    <!-- Optional theme -->
-    <link rel="stylesheet"
-      href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css"
-      integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp"
-      crossorigin="anonymous">
-
+    <link rel="stylesheet" href="/static/semantic.min.css"/>
     <link rel="stylesheet" href="/static/main.css"/>
-
-    <!-- Latest compiled and minified JavaScript -->
-    <script
-      src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"
-      integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
-      crossorigin="anonymous"></script>
   </head>
   <body>
-    <nav class="navbar navbar-inverse navbar-fixed-top">
-      <div class="container">
-        <div class="navbar-header">
-          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-            <span class="sr-only">Toggle navigation</span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </button>
-          <a class="navbar-brand" href="/">TL;DR</a>
-        </div>
-        <div id="navbar" class="navbar-collapse collapse">
-          <ul class="nav navbar-nav">
-            <li></li>
-          </ul>
-        </div><!--/.navbar-collapse -->
+    <div class="ui fixed inverted menu">
+      <div class="ui container">
+        <a href="#" class="header item">
+          TL;DR
+        </a>
       </div>
-    </nav>
+    </div>
 
     <div class="content">
     {% block content %}{% endblock %}
     </div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="/static/semantic.min.js"></script>
+    <script src="/static/underscore-min.js"></script><!-- v1.8.3 -->
+    <script src="/static/backbone-min.js"></script><!-- v1.3.3 -->
+    <script src="/static/main.js"></script>
+    {% block javascript %}{% endblock %}
   </body>
 </html>
