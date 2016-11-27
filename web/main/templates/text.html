@@ -11,10 +11,15 @@
       <textarea name="text" rows="16">
         {%- if text -%}
           {{ text }}
+        {%- elif sample -%}
+          {{ sample }}
         {%- endif -%}
       </textarea>
-      <button class="ui button">TL;DR</button>
     </div>
+    <div class="field">
+      <button class="ui right floated teal button">TL;DR</button>
+    </div>
+    <div class="field"></div>
   </form>
 
   <div id="loading" class="ui segment">

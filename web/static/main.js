@@ -15,6 +15,7 @@ var SummaryView = Backbone.View.extend({
 
   initialize: function() {
     console.log('view.initialize');
+    this.textareaChanged();
     this.render();
   },
 

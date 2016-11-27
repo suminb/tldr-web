@@ -11,8 +11,10 @@ main_module = Blueprint('main', __name__, template_folder='templates')
 @main_module.route('text', methods=['GET', 'POST'])
 def text():
     text = request.form.get('text')
+    sample = load_sample_text()
     def get():
         context = {
+            'sample': sample,
             'text': text,
         }
         return render_template('text.html', **context)
@@ -45,6 +47,12 @@ def url():
         context['text'] = summarize_url(url)
 
     return render_template('url.html', **context)
+
+
+def load_sample_text():
+    base_path = os.path.dirname(__file__)
+    with open(os.path.join(base_path, 'sample1.txt')) as fin:
+        return fin.read()
 
 
 def is_plain_text_requested(accept_mimetypes):
