@@ -17,7 +17,8 @@
       </textarea>
     </div>
     <div class="field">
-      <button class="ui right floated teal button">TL;DR</button>
+      <button id="submit-button" class="ui right floated teal button"
+        data-html="Too Long; Didn't Read<br/>너무 길어서 읽지 않았다">TL;DR</button>
     </div>
     <div class="field"></div>
   </form>
@@ -40,6 +41,7 @@
 <script>
   $(function() {
     $('.menu .item').tab();
+    $('#submit-button').popup();
   });
 </script>
 {% endblock %}
