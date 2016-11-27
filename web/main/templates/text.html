@@ -1,0 +1,43 @@
+{% extends 'layout.html' %}
+{% block content %}
+
+<div class="ui top attached tabular menu">
+  <a class="item active" data-tab="first">Text</a>
+  <a class="item" data-tab="second">URL</a>
+</div>
+<div class="ui bottom attached tab segment active" data-tab="first">
+  <form class="ui form" method="post" action="{{ url_for('main.text') }}">
+    <div class="field">
+      <textarea name="text">
+        {%- if text -%}
+          {{ text }}
+        {%- endif -%}
+      </textarea>
+      <button class="ui button">TL;DR</button>
+    </div>
+  </form>
+
+  <div id="text-summary" class="ui segment">
+    <img class="ui wireframe image" src="/static/images/short-paragraph.png"/>
+    <div class="ui active inverted dimmer">
+      <div class="ui text loader">Loading</div>
+    </div>
+  </div>
+</div>
+<div class="ui bottom attached tab segment" data-tab="second">
+</div>
+
+<script>
+$('form').on('submit', function(event) {
+  var action = event.target.action;
+  var text = $('textarea[name=text]').text();
+
+  $.post(action, {text: text}, function(resp) {
+    $('#text-summary').text(resp);
+  }, 'text');
+
+  return false;
+});
+</script>
+
+{% endblock %}
