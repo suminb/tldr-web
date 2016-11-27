@@ -5,9 +5,6 @@
 
     <link rel="stylesheet" href="/static/semantic.min.css"/>
     <link rel="stylesheet" href="/static/main.css"/>
-
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
-    <script src="/static/semantic.min.js"></script>
   </head>
   <body>
     <div class="ui fixed inverted menu">
@@ -21,5 +18,11 @@
     <div class="content">
     {% block content %}{% endblock %}
     </div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="/static/semantic.min.js"></script>
+    <script src="/static/underscore-min.js"></script><!-- v1.8.3 -->
+    <script src="/static/backbone-min.js"></script><!-- v1.3.3 -->
+    <script src="/static/main.js"></script>
   </body>
 </html>
