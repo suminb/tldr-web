@@ -1,10 +1,14 @@
-var SummaryModel = Backbone.Model.extend({
+var TextSummaryModel = Backbone.Model.extend({
   state: 'ready', // ready | loading | errored
   text: '',
   summary: ''
 });
 
-var SummaryView = Backbone.View.extend({
+
+var URLSummaryModel = Backbone.Model.extend({});
+
+
+var TextSummaryView = Backbone.View.extend({
   el: '#text-summary',
   bindings: {
   },
@@ -34,28 +38,34 @@ var SummaryView = Backbone.View.extend({
 });
 
 
+var URLSummaryView = Backbone.View.extend({
+
+});
+
+
 $('form').on('submit', function(event) {
   event.preventDefault();
 
   var action = event.target.action;
-  var text = model.text;
-  model.set({state: 'loading'});
+  var text = textSummaryModel.text;
+  textSummaryModel.set({state: 'loading'});
 
   $.post(action, {text: text}, function(resp) {
-    model.set({summary: resp, state: 'ready'});
+    textSummaryModel.set({summary: resp, state: 'ready'});
   }, 'text');
 });
 
 
-window.model = new SummaryModel();
+window.textSummaryModel = new TextSummaryModel();
+window.urlSummaryModel = new URLSummaryModel();
 
 
 // TODO: Could we remove this boiler-plate code?
-model.on('change:summary', function(m, v) {
+textSummaryModel.on('change:summary', function(m, v) {
   console.log('model.summary changed');
 });
 
-model.on('change:state', function(m, state) {
+textSummaryModel.on('change:state', function(m, state) {
 
   console.log('model.state changed:', state);
 
@@ -64,13 +74,13 @@ model.on('change:state', function(m, state) {
   // So we decided to do the work here until we figure what exactly is going
   // on.
   //
-  // model.stateChanged(state);
+  // textSummaryModel.stateChanged(state);
 
   if (state == 'ready') {
-    var summary = model.get('summary');
+    var summary = textSummaryModel.get('summary');
     $('#loading').hide();
     if (summary) {
-      // TODO: Bind this view to model.summary
+      // TODO: Bind this view to textSummaryModel.summary
       $('#summary').html(summary).show();
     }
     else
@@ -85,8 +95,8 @@ model.on('change:state', function(m, state) {
   }
 });
 
-var app = new SummaryView({model: model});
+var app = new TextSummaryView({model: textSummaryModel});
 
 $(function() {
-  model.set({state: 'ready'});
+  textSummaryModel.set({state: 'ready'});
 });
