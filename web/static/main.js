@@ -10,20 +10,17 @@ var SummaryView = Backbone.View.extend({
   },
 
   events: {
-    'change textarea': 'textareaChanged'
+    'change textarea': 'textareaChanged',
+    'change:state': 'stateChanged'
   },
 
   initialize: function() {
     console.log('view.initialize');
     this.textareaChanged();
-    this.render();
   },
 
   render: function() {
     console.log('view.render');
-
-    // TODO: Bind this view to model.state
-    this.stateChanged(this.model.state);
   },
 
   textareaChanged: function() {
@@ -33,22 +30,6 @@ var SummaryView = Backbone.View.extend({
 
   stateChanged: function(state) {
     console.log('stateChanged');
-    if (state == 'ready') {
-      $('#loading').hide();
-      if (this.model.summary) {
-        // TODO: Bind this view to model.summary
-        $('#summary').html(this.model.summary).show();
-      }
-      else
-        $('#summary').hide();
-    }
-    else if (state == 'loading') {
-      $('#loading').show();
-      $('#summary').hide();
-    }
-    else {
-      throw 'Invalid state: ' + state;
-    }
   }
 });
 
@@ -57,17 +38,55 @@ $('form').on('submit', function(event) {
   event.preventDefault();
 
   var action = event.target.action;
-  var text = window.summary.text;
-  window.summary.state = 'loading';
-  app.render();
+  var text = model.text;
+  model.set({state: 'loading'});
 
   $.post(action, {text: text}, function(resp) {
-    window.summary.summary = resp;
-    window.summary.state = 'ready';
-    app.render();
+    model.set({summary: resp, state: 'ready'});
   }, 'text');
 });
 
 
-window.summary = new SummaryModel();
-var app = new SummaryView({model: window.summary});
+window.model = new SummaryModel();
+
+
+// TODO: Could we remove this boiler-plate code?
+model.on('change:summary', function(m, v) {
+  console.log('model.summary changed');
+});
+
+model.on('change:state', function(m, state) {
+
+  console.log('model.state changed:', state);
+
+  // NOTE: At this point, the `model` sure looks like SummaryModel,
+  // but it does not have `stateChanged` function defined inside the mode.
+  // So we decided to do the work here until we figure what exactly is going
+  // on.
+  //
+  // model.stateChanged(state);
+
+  if (state == 'ready') {
+    var summary = model.get('summary');
+    $('#loading').hide();
+    if (summary) {
+      // TODO: Bind this view to model.summary
+      $('#summary').html(summary).show();
+    }
+    else
+      $('#summary').hide();
+  }
+  else if (state == 'loading') {
+    $('#loading').show();
+    $('#summary').hide();
+  }
+  else {
+    throw 'Invalid state: ' + state;
+  }
+});
+
+var app = new SummaryView({model: model});
+
+$(function() {
+  model.set({state: 'ready'});
+});
