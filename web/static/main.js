@@ -98,6 +98,8 @@ $('#url-summary form').on('submit', function(event) {
 
   var action = event.target.action;
   var url = urlSummaryModel.get('url');
+
+  $('#url-summary div.summary').text('');
   urlSummaryModel.set({html: null, text: null, summary: null});
   urlSummaryModel.fetch(url);
 });
@@ -143,23 +145,29 @@ textSummaryModel.on('change:state', function(m, state) {
 });
 
 urlSummaryModel.on('change:html', function(model, value) {
-  urlSummaryView.progress(20, 'Extracting text from HTML');
-  $.post('/extract-text', {html: value}, function(resp) {
-    urlSummaryView.progress(50, 'Extracted text from HTML');
-    model.set('text', resp);
-  });
+  if (value) {
+    urlSummaryView.progress(25, 'Extracting text from HTML');
+    $.post('/extract-text', {html: value}, function(resp) {
+      urlSummaryView.progress(50, 'Extracted text from HTML');
+      model.set('text', resp);
+    });
+  }
 });
 
-urlSummaryModel.on('change:text', function(model, text) {
-  console.log('urlSummaryModel change:text', model, text);
-  $.post('/', {text: text}, function(resp) {
-    urlSummaryView.progress(100, 'Finished');
-    urlSummaryModel.set({summary: resp});
-  }, 'text');
+urlSummaryModel.on('change:text', function(model, value) {
+  if (value) {
+    urlSummaryView.progress(55, 'Summarizing text');
+    $.post('/', {text: value}, function(resp) {
+      urlSummaryView.progress(100, 'Finished');
+      urlSummaryModel.set({summary: resp});
+    }, 'text');
+  }
 });
 
 urlSummaryModel.on('change:summary', function(mode, value) {
-  $('#url-summary div.summary').text(value);
+  if (value) {
+    $('#url-summary div.summary').text(value);
+  }
 });
 
 
