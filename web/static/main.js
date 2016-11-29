@@ -9,12 +9,16 @@ var URLSummaryModel = Backbone.Model.extend({
   fetch: function(url) {
     var model = this;
     // TODO: Check if URL is valid
-    // TODO: Deal with CORS issue
-    $.get(url, function(resp) {
+    // FIXME: Is this okay to reference the view from model?
+    urlSummaryView.progress(0, 'Fetching the web page');
+
+    var params = {url: url};
+    $.get('/fetch-url', params, function(resp) {
       model.set('html', resp);
-    }, 'html')
+      urlSummaryView.progress(10, 'Web page fetched');
+    })
     .fail(function(resp) {
-      console.log(resp);
+      // TODO: Do something
     });
   }
 });
@@ -59,6 +63,16 @@ var URLSummaryView = Backbone.View.extend({
     'change input[name=url]': 'onChangeURL'
   },
 
+  /**
+   * @param percent (int)
+   */
+  progress: function(percent, label) {
+    $('#url-summary .ui.progress').progress({
+      percent: percent
+    });
+    $('#url-summary .ui.progress .label').html(label);
+  },
+
   onChangeURL: function(event, x) {
     console.log('onChangeURL:', event);
     this.model.set('url', event.target.value);
@@ -74,10 +88,9 @@ $('#text-summary form').on('submit', function(event) {
   textSummaryModel.set({state: 'loading'});
 
   $.post(action, {text: text}, function(resp) {
-    textSummaryModel.set({summary: resp, state: 'ready'});
+   textSummaryModel.set({summary: resp, state: 'ready'});
   }, 'text');
 });
-
 
 $('#url-summary form').on('submit', function(event) {
   event.preventDefault();
@@ -128,6 +141,9 @@ textSummaryModel.on('change:state', function(m, state) {
   }
 });
 
+urlSummaryModel.on('change:html', function(model, value) {
+  urlSummaryView.progress(20);
+});
 
 urlSummaryModel.on('change:text', function(model, text) {
   console.log('urlSummaryModel change:text', mode, text);
