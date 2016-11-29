@@ -2,6 +2,7 @@ import os
 
 from flask import Blueprint, render_template, request
 import requests
+from werkzeug.exceptions import BadRequest
 
 
 main_module = Blueprint('main', __name__, template_folder='templates')
@@ -47,6 +48,21 @@ def url():
         context['text'] = summarize_url(url)
 
     return render_template('url.html', **context)
+
+
+@main_module.route('fetch-url')
+def fetch_url():
+    url = request.args['url']
+    method = request.args.get('method', 'get').lower()
+
+    if method != 'get':
+        raise BadRequest("Request method '{}' is not supported".format(method))
+
+    request_func = getattr(requests, method)
+    # TODO: Support passing parameters
+    resp = request_func(url)
+
+    return resp.text
 
 
 def load_sample_text():
