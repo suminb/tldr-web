@@ -14,8 +14,8 @@ var URLSummaryModel = Backbone.Model.extend({
 
     var params = {url: url};
     $.get('/fetch-url', params, function(resp) {
-      model.set('html', resp);
       urlSummaryView.progress(10, 'Web page fetched');
+      model.set('html', resp.trim());
     })
     .fail(function(resp) {
       // TODO: Do something
@@ -142,11 +142,15 @@ textSummaryModel.on('change:state', function(m, state) {
 });
 
 urlSummaryModel.on('change:html', function(model, value) {
-  urlSummaryView.progress(20);
+  urlSummaryView.progress(20, 'Extracting text from HTML');
+  $.post('/extract-text', {html: value}, function(resp) {
+    urlSummaryView.progress(50, 'Extracted text from HTML');
+    model.set('text', resp);
+  });
 });
 
 urlSummaryModel.on('change:text', function(model, text) {
-  console.log('urlSummaryModel change:text', mode, text);
+  console.log('urlSummaryModel change:text', model, text);
 });
 
 

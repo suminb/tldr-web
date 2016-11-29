@@ -62,7 +62,17 @@ def fetch_url():
     # TODO: Support passing parameters
     resp = request_func(url)
 
-    return resp.text
+    try:
+        return resp.content.decode('utf-8')
+    except UnicodeDecodeError:
+        return resp.content.decode('euc-kr')
+
+
+@main_module.route('extract-text', methods=['POST'])
+def extract_text():
+    html = request.form['html']
+    text = __extract_text__(html)
+    return text
 
 
 def load_sample_text():
@@ -106,6 +116,17 @@ def summarize_text(text):
     request_url = '{}/api/v1/summarize'.format(backend_endpoint)
     data = {
         'text': text,
+    }
+    resp = requests.post(request_url, data=data)
+    return resp.text
+
+
+def __extract_text__(html):
+    backend_endpoint = os.environ['BACKEND_ENDPOINT']
+    print(backend_endpoint)
+    request_url = '{}/api/v1/extract-text'.format(backend_endpoint)
+    data = {
+        'html': html,
     }
     resp = requests.post(request_url, data=data)
     return resp.text
