@@ -92,12 +92,13 @@ $('#text-summary form').on('submit', function(event) {
   }, 'text');
 });
 
+
 $('#url-summary form').on('submit', function(event) {
   event.preventDefault();
 
   var action = event.target.action;
   var url = urlSummaryModel.get('url');
-  urlSummaryModel.set({state: 'fetching'});
+  urlSummaryModel.set({html: null, text: null, summary: null});
   urlSummaryModel.fetch(url);
 });
 
@@ -151,7 +152,16 @@ urlSummaryModel.on('change:html', function(model, value) {
 
 urlSummaryModel.on('change:text', function(model, text) {
   console.log('urlSummaryModel change:text', model, text);
+  $.post('/', {text: text}, function(resp) {
+    urlSummaryView.progress(100, 'Finished');
+    urlSummaryModel.set({summary: resp});
+  }, 'text');
 });
+
+urlSummaryModel.on('change:summary', function(mode, value) {
+  $('#url-summary div.summary').text(value);
+});
+
 
 
 var textSummaryView = new TextSummaryView({model: textSummaryModel});

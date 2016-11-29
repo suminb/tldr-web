@@ -123,7 +123,6 @@ def summarize_text(text):
 
 def __extract_text__(html):
     backend_endpoint = os.environ['BACKEND_ENDPOINT']
-    print(backend_endpoint)
     request_url = '{}/api/v1/extract-text'.format(backend_endpoint)
     data = {
         'html': html,
