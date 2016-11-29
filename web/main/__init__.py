@@ -18,7 +18,7 @@ def text():
             'sample': sample,
             'text': text,
         }
-        return render_template('text.html', **context)
+        return render_template('index.html', **context)
 
     def post():
         summary = summarize_text(text)
@@ -30,7 +30,7 @@ def text():
                 'text': text,
                 'summary': summary,
             }
-            return render_template('text.html', **context)
+            return render_template('index.html', **context)
 
     handler = get_handler(request.method, locals())
     return handler()

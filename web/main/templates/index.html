@@ -1,45 +1,76 @@
 {% extends 'layout.html' %}
 {% block content %}
 
+<!-- tabs -->
 <div class="ui top attached tabular menu">
-  <a class="item active" data-tab="first">Text</a>
-  <a class="item" data-tab="second">URL</a>
+  <a class="item active" data-tab="text">Text</a>
+  <a class="item" data-tab="url">URL</a>
 </div>
-<div class="ui bottom attached tab segment active" data-tab="first">
+
+<!-- First tab content (text summarization) -->
+<div id="text-summary" class="ui bottom attached tab segment active" data-tab="text">
   <form class="ui form" method="post" action="{{ url_for('main.text') }}">
     <div class="field">
-      <textarea name="text"></textarea>
-      <button class="ui button">TL;DR</button>
+      <textarea name="text" rows="16">
+        {%- if text -%}
+          {{ text }}
+        {%- elif sample -%}
+          {{ sample }}
+        {%- endif -%}
+      </textarea>
     </div>
+    <div class="field">
+      <button id="submit-button" class="ui right floated teal button"
+        data-html="Too Long; Didn't Read<br/>너무 길어서 읽지 않았다">TL;DR</button>
+    </div>
+    <div class="field"></div>
   </form>
+
+  <div id="loading" class="ui segment">
+    <img class="ui wireframe image" src="/static/images/short-paragraph.png"/>
+    <div class="ui active inverted dimmer">
+      <div class="ui text loader">Loading</div>
+    </div>
+  </div>
+  <div id="summary" class="ui segment"></div>
 </div>
-<div class="ui bottom attached tab segment" data-tab="second">
+
+<!-- Second tab content (URL summarization) -->
+<div id="url-summary" class="ui bottom attached tab segment" data-tab="url">
   <form class="ui form" method="post" action="{{ url_for('main.url') }}">
-    <div class="ui fluid action input">
-      <input type="text" name="url" value="{{ url if url else '' }}"
-        placeholder="http://awesome.website.com"/>
-      <button class="ui button">TL;DR</button>
+    <div class="field">
+      <input type="text" name="url" placeholder="http://awesomewebsite.com">
     </div>
+      <button id="url-submit-button" class="ui right floated teal button"
+        data-html="Too Long; Didn't Read<br/>너무 길어서 읽지 않았다">TL;DR</button>
+    <div class="field"></div>
   </form>
+
+  <div class="ui indicating progress">
+    <div class="bar"></div>
+    <div class="label"></div>
+  </div>
+
+  <!--
+  <div id="" class="ui segment">
+    <img class="ui wireframe image" src="/static/images/short-paragraph.png"/>
+    <div class="ui active inverted dimmer">
+      <div class="ui text loader">Loading</div>
+    </div>
+  </div>
+  -->
+  <div id="summary" class="ui segment"></div>
 </div>
 
-<!--
-      <div class="fields">
-        <div class="twelve wide field">
-          <input type="text" name="url" value="{{ url if url else '' }}"
-           placeholder="http://awesome.website.com" class="form-control"/>
-        </div>
-        <div class="four wide field">
-          <button type="submit" class="ui button">Submit</button>
-        </div>
-      </div>
--->
-
-
+{% endblock %}
+{% block javascript %}
+<script src="/static/jquery.address.js"></script>
 <script>
-$(function() {
-  $('.menu .item').tab();
-});
+  $(function() {
+    $('.menu .item').tab({
+      history: true
+    });
+    $('#submit-button').popup();
+  });
 </script>
-
 {% endblock %}
