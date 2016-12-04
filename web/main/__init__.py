@@ -2,6 +2,7 @@ import os
 
 from flask import Blueprint, render_template, request
 import requests
+from werkzeug.exceptions import BadRequest
 
 
 main_module = Blueprint('main', __name__, template_folder='templates')
@@ -17,7 +18,7 @@ def text():
             'sample': sample,
             'text': text,
         }
-        return render_template('text.html', **context)
+        return render_template('index.html', **context)
 
     def post():
         summary = summarize_text(text)
@@ -29,7 +30,7 @@ def text():
                 'text': text,
                 'summary': summary,
             }
-            return render_template('text.html', **context)
+            return render_template('index.html', **context)
 
     handler = get_handler(request.method, locals())
     return handler()
@@ -47,6 +48,31 @@ def url():
         context['text'] = summarize_url(url)
 
     return render_template('url.html', **context)
+
+
+@main_module.route('fetch-url')
+def fetch_url():
+    url = request.args['url']
+    method = request.args.get('method', 'get').lower()
+
+    if method != 'get':
+        raise BadRequest("Request method '{}' is not supported".format(method))
+
+    request_func = getattr(requests, method)
+    # TODO: Support passing parameters
+    resp = request_func(url)
+
+    try:
+        return resp.content.decode('utf-8')
+    except UnicodeDecodeError:
+        return resp.content.decode('euc-kr')
+
+
+@main_module.route('extract-text', methods=['POST'])
+def extract_text():
+    html = request.form['html']
+    text = __extract_text__(html)
+    return text
 
 
 def load_sample_text():
@@ -90,6 +116,16 @@ def summarize_text(text):
     request_url = '{}/api/v1/summarize'.format(backend_endpoint)
     data = {
         'text': text,
+    }
+    resp = requests.post(request_url, data=data)
+    return resp.text
+
+
+def __extract_text__(html):
+    backend_endpoint = os.environ['BACKEND_ENDPOINT']
+    request_url = '{}/api/v1/extract-text'.format(backend_endpoint)
+    data = {
+        'html': html,
     }
     resp = requests.post(request_url, data=data)
     return resp.text
