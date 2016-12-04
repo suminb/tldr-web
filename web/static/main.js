@@ -100,6 +100,11 @@ $('#url-summary form').on('submit', function(event) {
   var url = urlSummaryModel.get('url');
 
   $('#url-summary div.summary').text('');
+
+  // FIXME: This is probably error-prone code
+  $('#url-summary button').prop('disabled', true);
+  $('.ui.progress').show();
+
   urlSummaryModel.set({html: null, text: null, summary: null});
   urlSummaryModel.fetch(url);
 });
@@ -167,6 +172,13 @@ urlSummaryModel.on('change:text', function(model, value) {
 urlSummaryModel.on('change:summary', function(mode, value) {
   if (value) {
     $('#url-summary div.summary').text(value);
+
+    // FIXME: This is probably error-prone code
+    $('#url-summary button').prop('disabled', false);
+    $('.ui.summary').show();
+    setTimeout(function() {
+      $('.ui.progress').hide(500);
+    }, 500);
   }
 });
 
@@ -177,4 +189,8 @@ var urlSummaryView = new URLSummaryView({model: urlSummaryModel});
 
 $(function() {
   textSummaryModel.set({state: 'ready'});
+
+  // FIXME: Move this elsewhere
+  $('.ui.progress').hide();
+  $('.ui.summary').hide();
 });
