@@ -103,7 +103,7 @@ def is_valid_method(method, valid_methods=['GET', 'POST']):
 # TODO: Move this elsewhere
 def summarize_url(url):
     backend_endpoint = os.environ['BACKEND_ENDPOINT']
-    request_url = '{}/api/v1/summarize_url'.format(backend_endpoint)
+    request_url = '{}/api/v1/summarize-url'.format(backend_endpoint)
     data = {
         'url': url,
     }
