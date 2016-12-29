@@ -19,14 +19,16 @@ def import_article(url):
 
     app = create_app(__name__)
     with app.app_context():
-        Article.create(
+        article = Article.create(
             fetched_at=datetime.utcnow(),
             channel=None,
-            url=url,
+            url=data['canonical_url'],
             title=data['title'],
             content=data['text'],
             summary=data['summary'],
         )
+
+        print(article.id)
 
 
 @cli.command()
