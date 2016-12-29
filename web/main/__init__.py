@@ -1,3 +1,4 @@
+import json
 import os
 
 from flask import Blueprint, render_template, request
@@ -45,7 +46,8 @@ def url():
     }
 
     if url is not None:
-        context['text'] = summarize_url(url)
+        data = summarize_url(url)
+        context['text'] = data['summary']
 
     return render_template('url.html', **context)
 
@@ -62,6 +64,7 @@ def fetch_url():
     # TODO: Support passing parameters
     resp = request_func(url)
 
+    # TODO: Consider other encodings as well
     try:
         return resp.content.decode('utf-8')
     except UnicodeDecodeError:
@@ -104,11 +107,14 @@ def is_valid_method(method, valid_methods=['GET', 'POST']):
 def summarize_url(url):
     backend_endpoint = os.environ['BACKEND_ENDPOINT']
     request_url = '{}/api/v1/summarize-url'.format(backend_endpoint)
+    headers = {
+        'Accept': 'application/json',
+    }
     data = {
         'url': url,
     }
-    resp = requests.post(request_url, data=data)
-    return resp.text
+    resp = requests.post(request_url, headers=headers, data=data)
+    return json.loads(resp.text)
 
 
 def summarize_text(text):
