@@ -3,3 +3,4 @@ flask-sqlalchemy>=2.1
 requests>=2.12.1
 gunicorn>=19.6.0
 temporaluuid64>=0.1.2
+logbook>=1.0.0

@@ -66,7 +66,7 @@ class Article(db.Model, CRUDMixin):
     channel = db.Column(db.String)
 
     #: Canonical URL
-    url = db.Column(db.String)
+    url = db.Column(db.String, unique=True)
 
     title = db.Column(db.String)
     content = db.Column(db.Text)
