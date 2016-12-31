@@ -1,12 +1,12 @@
 {% extends 'layout.html' %}
 {% block content %}
 
-<h2>{{ article.title }}</h2>
+<h2>
+  <a href="{{ article.url }}">{{ article.title }}</a>
+</h2>
 
 <p style="display:none">{{ article.content }}</p>
 
 <p>{{ article.summary }}</p>
-
-<div><a href="{{ article.url }}">Read the original article</a></div>
 
 {% endblock %}
