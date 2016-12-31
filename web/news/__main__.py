@@ -30,7 +30,7 @@ def import_article(url):
             article = Article.create(
                 fetched_at=datetime.utcnow(),
                 channel=None,
-                url=data['canonical_url'],
+                url=data['canonical_url'] or url,
                 title=data['title'],
                 content=data['text'],
                 summary=data['summary'],
