@@ -11,8 +11,11 @@ news_module = Blueprint('news', __name__, template_folder='templates')
 
 
 @news_module.route('/')
-def news_home():
-    return 'News home'
+def list_articles():
+    context = {
+        'articles': Article.query.all(),
+    }
+    return render_template('list_articles.html', **context)
 
 
 @news_module.route('/<int:article_id>')
