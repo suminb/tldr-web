@@ -1,0 +1,17 @@
+{% extends 'layout.html' %}
+{% block content %}
+
+<div class="ui items">
+  {%- for article in articles %}
+  <div class="item">
+    <div class="content">
+      <a class="header" href="{{ url_for('news.view_article', article_id=article.id) }}">{{ article.title }}</a>
+      <div class="meta">{{ article.summary|truncate(150) }}</div>
+      <div class="extra">{{ article.fetched_at.strftime('%Y-%m-%d') }}</div>
+    </div>
+  </div>
+  {% endfor -%}
+</div>
+
+{% endblock %}
+

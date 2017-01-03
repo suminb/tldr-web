@@ -1,0 +1,15 @@
+{% extends 'layout.html' %}
+{% block content %}
+
+<h2>
+  <a href="{{ article.url }}">{{ article.title }}</a>
+</h2>
+
+<p style="display:none">{{ article.content }}</p>
+
+<p>{{ article.summary }}</p>
+
+<a href="{{ article.url }}">Read Original Article</a> |
+<a href="{{ url_for('news.list_articles') }}">Article List</a>
+
+{% endblock %}
