@@ -1,24 +1,17 @@
 {% extends 'layout.html' %}
 {% block content %}
 
-<table class="table">
-  <thead>
-    <tr>
-      <th></th>
-    </tr>
-  </thead>
-  <tbody>
+<div class="ui items">
   {%- for article in articles %}
-    <tr>
-      <td>
-        <a href="{{ url_for('news.view_article', article_id=article.id) }}">
-          {{ article.title }}
-        </a>
-      </td>
-    </tr>
+  <div class="item">
+    <div class="content">
+      <a class="header" href="{{ url_for('news.view_article', article_id=article.id) }}">{{ article.title }}</a>
+      <div class="meta">{{ article.summary|truncate(150) }}</div>
+      <div class="extra">{{ article.fetched_at.strftime('%Y-%m-%d') }}</div>
+    </div>
+  </div>
   {% endfor -%}
-  </tbody>
-</table>
+</div>
 
 {% endblock %}
 
