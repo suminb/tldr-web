@@ -3,7 +3,7 @@ import os
 from flask import Flask
 
 
-__version__ = '0.1.4'
+__version__ = '0.1.5'
 
 
 def create_app(name=__name__):
