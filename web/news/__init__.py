@@ -1,10 +1,10 @@
-import os
-
 from flask import Blueprint, render_template, request
-import requests
 from werkzeug.exceptions import BadRequest
 
 from web.news.models import Article
+
+
+MAX_LIMIT = 100
 
 
 news_module = Blueprint('news', __name__, template_folder='templates')
@@ -12,8 +12,13 @@ news_module = Blueprint('news', __name__, template_folder='templates')
 
 @news_module.route('/')
 def list_articles():
+    limit = int(request.args.get('limit', 10))
+    # TODO: Make some sort of filter
+    limit = max(0, min(limit, MAX_LIMIT))
+
+    articles = Article.query.order_by(Article.fetched_at.desc()).limit(limit)
     context = {
-        'articles': Article.query.all(),
+        'articles': articles,
     }
     return render_template('list_articles.html', **context)
 
