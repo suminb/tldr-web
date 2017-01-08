@@ -38,6 +38,27 @@ class CRUDMixin(object):
         return cls.query.get_or_404(id)
 
     @classmethod
+    def get_entries(cls, where=None, order_by=None,
+                    page=0, entries_per_page=10):
+        """
+        :param page: Zero-based index
+        :param entries_per_page:
+        """
+        results = cls.query
+
+        if where is not None:
+            results = results.where(where)
+
+        if order_by is not None:
+            results = results.order_by(order_by)
+
+        results = results \
+            .offset(page * entries_per_page) \
+            .limit(entries_per_page)
+
+        return results
+
+    @classmethod
     def exists(cls, **kwargs):
         row = cls.query.filter_by(**kwargs).first()
         return row is not None
