@@ -1,12 +1,18 @@
 import json
+from json.decoder import JSONDecodeError
 import os
+import sys
 
 from flask import Blueprint, render_template, request
+from logbook import Logger, StreamHandler
 import requests
 from werkzeug.exceptions import BadRequest
 
 
 main_module = Blueprint('main', __name__, template_folder='templates')
+
+StreamHandler(sys.stderr).push_application()
+log = Logger(__name__)
 
 
 @main_module.route('/', methods=['GET', 'POST'])
@@ -98,7 +104,11 @@ def summarize_url(url):
         'url': url,
     }
     resp = requests.post(request_url, headers=headers, data=data)
-    return json.loads(resp.text)
+    try:
+        return json.loads(resp.text)
+    except JSONDecodeError as e:
+        log.warn(e)
+        raise
 
 
 def summarize_text(text):
