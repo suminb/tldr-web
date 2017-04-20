@@ -8,16 +8,9 @@ __version__ = '0.1.5'
 
 def create_app(name=__name__):
     app = Flask(name)
-    app.config['SQLALCHEMY_DATABASE_URI'] = os.environ['DB_URI']
 
     from web.main import main_module
-    from web.news import news_module
-
     app.register_blueprint(main_module, url_prefix='/')
-    app.register_blueprint(news_module, url_prefix='/news')
-
-    from web.news.models import db
-    db.init_app(app)
 
     return app
 
