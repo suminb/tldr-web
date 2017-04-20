@@ -10,7 +10,6 @@ main_module = Blueprint('main', __name__, template_folder='templates')
 
 
 @main_module.route('/', methods=['GET', 'POST'])
-@main_module.route('text', methods=['GET', 'POST'])
 def text():
     text = request.form.get('text')
     sample = load_sample_text()
@@ -35,21 +34,6 @@ def text():
 
     handler = get_handler(request.method, locals())
     return handler()
-
-
-@main_module.route('url', methods=['GET', 'POST'])
-def url():
-    url = request.args.get('url', None)
-
-    context = {
-        'url': url,
-    }
-
-    if url is not None:
-        data = summarize_url(url)
-        context['text'] = data['summary']
-
-    return render_template('url.html', **context)
 
 
 @main_module.route('fetch-url')
