@@ -22,6 +22,8 @@ resource "aws_lambda_function" "lambda" {
   role          = "${var.role}"
   handler       = "${var.name}.${var.handler}"
   runtime       = "${var.runtime}"
+  timeout       = "10"
+  source_code_hash = "${base64sha256(file("${var.name}.zip"))}"
 }
 
 output "name" {
