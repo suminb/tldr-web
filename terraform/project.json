@@ -1,0 +1,5 @@
+{
+  "name": "main",
+  "description": "Main handler",
+  "role": "arn:aws:iam::293503197324:role/lambda"
+}
