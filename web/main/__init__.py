@@ -64,7 +64,7 @@ def extract_text():
 
 def load_sample_text():
     base_path = os.path.dirname(__file__)
-    with open(os.path.join(base_path, 'sample1.txt')) as fin:
+    with open(os.path.join(base_path, 'sample2.txt')) as fin:
         return fin.read()
 
 
