@@ -9,30 +9,25 @@
 
 <!-- First tab content (text summarization) -->
 <div id="text-summary" class="ui bottom attached tab segment active" data-tab="text">
-  <form class="ui form" method="post" action="{{ url_for('main.text') }}">
+  <form class="ui form" method="post" action="{{ url_for('main.text') }}" v-on:submit.prevent>
     <div class="field">
-      <textarea name="text" rows="16">
-        {%- if text -%}
-          {{ text }}
-        {%- elif sample -%}
-          {{ sample }}
-        {%- endif -%}
-      </textarea>
+      <textarea name="text" rows="16" v-model="text"></textarea>
     </div>
     <div class="field">
       <button id="submit-button" class="ui right floated teal button"
+        v-on:click="submit($event)"
         data-html="Too Long; Didn't Read<br/>너무 길어서 읽지 않았다">TL;DR</button>
     </div>
     <div class="field"></div>
   </form>
 
-  <div id="loading" class="ui segment">
+  <div id="loading" class="ui segment" v-if="loading">
     <img class="ui wireframe image" src="/static/images/short-paragraph.png"/>
     <div class="ui active inverted dimmer">
       <div class="ui text loader">Loading</div>
     </div>
   </div>
-  <div id="summary" class="ui segment"></div>
+  <div id="summary" class="ui segment">{% raw %}{{ summary }}{% endraw %}</div>
 </div>
 
 <!-- Second tab content (URL summarization) -->
@@ -64,13 +59,37 @@
 
 {% endblock %}
 {% block javascript %}
+<script src="https://unpkg.com/vue"></script>
 <script src="/static/jquery.address.js"></script>
 <script>
+  var app = new Vue({
+    el: '#text-summary',
+    data: {
+      loading: false,
+      text: '',
+      summary: '',
+    },
+    methods: {
+      submit: function(event) {
+        var action = $('#text-summary form').attr('action');
+        var text = $('#text-summary textarea[name=text]').val()
+        $.post(action, {text: text}, function(resp) {
+          app.summary = resp;
+        }, 'text');
+      }
+    }
+  });
+
   $(function() {
     $('.menu .item').tab({
       history: true
     });
     $('.ui.right.floated.teal.button').popup();
+
+    $.get('/static/sample2.txt', function(resp) {
+      app.text = resp;
+    });
+
   });
 </script>
 {% endblock %}
