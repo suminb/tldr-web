@@ -34,18 +34,19 @@
 
 <!-- Second tab content (URL summarization) -->
 <div id="url-summary" class="ui bottom attached tab segment" data-tab="url">
-  <form class="ui form" method="post">
+  <form class="ui form" method="post" action="{{ url_for('main.fetch_url') }}" v-on:submit.prevent>
     <div class="field">
       <input type="text" name="url" placeholder="http://awesomewebsite.com">
     </div>
-      <button id="url-submit-button" class="ui right floated teal button"
+      <button class="ui right floated teal button"
+        v-on:click="submit($event)"
         data-html="Too Long; Didn't Read<br/>너무 길어서 읽지 않았다">TL;DR</button>
     <div class="field"></div>
   </form>
 
-  <div class="ui indicating progress">
+  <div class="ui indicating progress" v-if="state != 'ready'">
     <div class="bar"></div>
-    <div class="label"></div>
+    <div class="label">{% raw %}{{ label }}{% endraw %}</div>
   </div>
 
   <!--
@@ -56,7 +57,9 @@
     </div>
   </div>
   -->
-  <div class="ui segment summary"></div>
+  <div class="ui segment summary" v-if="summary">
+    {% raw %}{{ summary }}{% endraw %}
+  </div>
 </div>
 
 {% endblock %}

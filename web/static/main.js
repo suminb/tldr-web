@@ -9,7 +9,7 @@ var tapp = new Vue({
   methods: {
     submit: function(event) {
       var action = $('#text-summary form').attr('action');
-      var text = $('#text-summary textarea[name=text]').val()
+      var text = $('#text-summary textarea[name=text]').val();
       tapp.summary = '';
       tapp.loading = true;
       $.post(action, {text: text}, function(resp) {
@@ -22,107 +22,70 @@ var tapp = new Vue({
   }
 });
 
+// FIXME: In some sense, we are abusing Vue. The following part must be
+// refactored as soon as possible.
+
 // `uapp` stands for URL summary app
-var uapp;
-
-var URLSummaryModel = Backbone.Model.extend({
-  fetch: function(url) {
-    var model = this;
-    // TODO: Check if URL is valid
-    // FIXME: Is this okay to reference the view from model?
-    urlSummaryView.progress(0, 'Fetching the web page');
-
-    var params = {url: url};
-    $.get('/fetch-url', params, function(resp) {
-      urlSummaryView.progress(10, 'Web page fetched');
-      model.set('html', resp.trim());
-    })
-    .fail(function(resp) {
-      // TODO: Do something
-    });
-  }
-});
-
-
-var URLSummaryView = Backbone.View.extend({
+var uapp = new Vue({
   el: '#url-summary',
-  bindings: {
-    'input[name=url]': 'value:url'
+  data: {
+    state: 'ready',
+    label: '',
+    url: '',
+    html: '',
+    text: '',
+    summary: ''
   },
-  events: {
-    'change input[name=url]': 'onChangeURL'
+  methods: {
+    submit: function(event) {
+      var action = $('#url-summary form').attr('action');
+      var url = $('#url-summary input[name=url]').val();
+      uapp.summary = '';
+      uapp.state = 'fetch-url';
+
+      $('.ui.progress').show();
+      progress(0, 'Fetching the web page');
+      $.get(action, {url: url}, function(resp) {
+        progress(10, 'Web page fetched');
+        uapp.html = resp.trim();
+      })
+      .fail(function(resp) {
+        // TODO: Do something
+      });
+    }
   },
-
-  /**
-   * @param percent (int)
-   */
-  progress: function(percent, label) {
-    $('#url-summary .ui.progress').progress({
-      percent: percent
-    });
-    $('#url-summary .ui.progress .label').html(label);
-  },
-
-  onChangeURL: function(event, x) {
-    console.log('onChangeURL:', event);
-    this.model.set('url', event.target.value);
+  watch: {
+    html: function(value) {
+      if (value) {
+        uapp.state = 'extract-text';
+        progress(25, 'Extracting text from HTML');
+        $.post('/extract-text', {html: value}, function(resp) {
+          progress(50, 'Extracted text from HTML');
+          uapp.text = resp;
+        });
+      }
+    },
+    text: function(value) {
+      if (value) {
+        uapp.state = 'summarize';
+        progress(55, 'Summarizing text');
+        $.post('/', {text: value}, function(resp) {
+          progress(100, 'Finished');
+          uapp.summary = resp;
+        }, 'text')
+        .always(function() {
+          setTimeout(function() {
+            $('.ui.progress').hide(500);
+          }, 500);
+        });
+      }
+    }
   }
 });
 
-
-$('#url-summary form').on('submit', function(event) {
-  event.preventDefault();
-
-  var action = event.target.action;
-  var url = urlSummaryModel.get('url');
-
-  $('#url-summary div.summary').text('');
-
-  // FIXME: This is probably error-prone code
-  $('#url-summary button').prop('disabled', true);
-  $('.ui.progress').show();
-
-  urlSummaryModel.set({html: null, text: null, summary: null});
-  urlSummaryModel.fetch(url);
-});
-
-
-window.urlSummaryModel = new URLSummaryModel();
-
-
-urlSummaryModel.on('change:html', function(model, value) {
-  if (value) {
-    urlSummaryView.progress(25, 'Extracting text from HTML');
-    $.post('/extract-text', {html: value}, function(resp) {
-      urlSummaryView.progress(50, 'Extracted text from HTML');
-      model.set('text', resp);
-    });
-  }
-});
-
-urlSummaryModel.on('change:text', function(model, value) {
-  if (value) {
-    urlSummaryView.progress(55, 'Summarizing text');
-    $.post('/', {text: value}, function(resp) {
-      urlSummaryView.progress(100, 'Finished');
-      urlSummaryModel.set({summary: resp});
-    }, 'text');
-  }
-});
-
-urlSummaryModel.on('change:summary', function(mode, value) {
-  if (value) {
-    $('#url-summary div.summary').text(value);
-
-    // FIXME: This is probably error-prone code
-    $('#url-summary button').prop('disabled', false);
-    $('.ui.summary').show();
-    setTimeout(function() {
-      $('.ui.progress').hide(500);
-    }, 500);
-  }
-});
-
-
-
-var urlSummaryView = new URLSummaryView({model: urlSummaryModel});
+function progress(percent, label) {
+  $('#url-summary .ui.progress').progress({
+    percent: percent
+  });
+  uapp.label = label;
+}
