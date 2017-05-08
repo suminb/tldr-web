@@ -27,7 +27,9 @@
       <div class="ui text loader">Loading</div>
     </div>
   </div>
-  <div id="summary" class="ui segment">{% raw %}{{ summary }}{% endraw %}</div>
+  <div id="summary" class="ui segment" v-if="summary">
+    {% raw %}{{ summary }}{% endraw %}
+  </div>
 </div>
 
 <!-- Second tab content (URL summarization) -->
@@ -65,7 +67,7 @@
   var app = new Vue({
     el: '#text-summary',
     data: {
-      loading: false,
+      loading: false, // NOTE: Not sure if this is a good idea
       text: '',
       summary: '',
     },
@@ -73,9 +75,14 @@
       submit: function(event) {
         var action = $('#text-summary form').attr('action');
         var text = $('#text-summary textarea[name=text]').val()
+        app.summary = '';
+        app.loading = true;
         $.post(action, {text: text}, function(resp) {
           app.summary = resp;
-        }, 'text');
+        }, 'text')
+        .always(function() {
+          app.loading = false;
+        });
       }
     }
   });
