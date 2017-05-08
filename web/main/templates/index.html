@@ -61,32 +61,8 @@
 
 {% endblock %}
 {% block javascript %}
-<script src="https://unpkg.com/vue"></script>
 <script src="/static/jquery.address.js"></script>
 <script>
-  var app = new Vue({
-    el: '#text-summary',
-    data: {
-      loading: false, // NOTE: Not sure if this is a good idea
-      text: '',
-      summary: '',
-    },
-    methods: {
-      submit: function(event) {
-        var action = $('#text-summary form').attr('action');
-        var text = $('#text-summary textarea[name=text]').val()
-        app.summary = '';
-        app.loading = true;
-        $.post(action, {text: text}, function(resp) {
-          app.summary = resp;
-        }, 'text')
-        .always(function() {
-          app.loading = false;
-        });
-      }
-    }
-  });
-
   $(function() {
     $('.menu .item').tab({
       history: true
@@ -94,7 +70,7 @@
     $('.ui.right.floated.teal.button').popup();
 
     $.get('/static/sample2.txt', function(resp) {
-      app.text = resp;
+      tapp.text = resp;
     });
 
   });

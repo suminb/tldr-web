@@ -1,3 +1,30 @@
+// `tapp` stands for text summary app
+var tapp = new Vue({
+  el: '#text-summary',
+  data: {
+    loading: false, // NOTE: Not sure if this is a good idea
+    text: '',
+    summary: '',
+  },
+  methods: {
+    submit: function(event) {
+      var action = $('#text-summary form').attr('action');
+      var text = $('#text-summary textarea[name=text]').val()
+      tapp.summary = '';
+      tapp.loading = true;
+      $.post(action, {text: text}, function(resp) {
+        tapp.summary = resp;
+      }, 'text')
+      .always(function() {
+        tapp.loading = false;
+      });
+    }
+  }
+});
+
+// `uapp` stands for URL summary app
+var uapp;
+
 var URLSummaryModel = Backbone.Model.extend({
   fetch: function(url) {
     var model = this;
